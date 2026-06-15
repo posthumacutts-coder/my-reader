@@ -45,6 +45,11 @@ async function initApp() {
 // ===== 书架事件 =====
 
 function bindBookshelfEvents() {
+  // 排序按钮
+  document.getElementById('sortBtn').addEventListener('click', () => {
+    cycleSort();
+  });
+
   // 添加书籍按钮
   document.getElementById('addBookBtn').addEventListener('click', () => {
     document.getElementById('fileInput').click();

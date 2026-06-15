@@ -1,14 +1,62 @@
 /**
  * bookshelf.js —— 书架视图逻辑
- * 书籍卡片渲染、添加、删除、重命名
+ * 书籍卡片渲染、添加、删除、重命名、排序
  */
 
 let pendingRenameId = null;
 
+// 排序模式: 'added_desc' | 'added_asc' | 'name_asc' | 'name_desc'
+const SORT_MODES = ['added_desc', 'added_asc', 'name_asc', 'name_desc'];
+const SORT_LABELS = ['最新在前', '最早在前', '书名 A-Z', '书名 Z-A'];
+let currentSort = localStorage.getItem('myreader_sort') || 'added_desc';
+
+/** 获取排序后的书架 */
+function getSortedBookshelf() {
+  const shelf = getBookshelf();
+  const sorted = [...shelf];
+
+  switch (currentSort) {
+    case 'added_desc':
+      sorted.sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+      break;
+    case 'added_asc':
+      sorted.sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0));
+      break;
+    case 'name_asc':
+      sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'zh'));
+      break;
+    case 'name_desc':
+      sorted.sort((a, b) => (b.title || '').localeCompare(a.title || '', 'zh'));
+      break;
+  }
+  return sorted;
+}
+
+/** 切换到下一个排序模式 */
+function cycleSort() {
+  const idx = SORT_MODES.indexOf(currentSort);
+  currentSort = SORT_MODES[(idx + 1) % SORT_MODES.length];
+  localStorage.setItem('myreader_sort', currentSort);
+  updateSortButton();
+  renderBookshelf();
+}
+
+/** 更新排序按钮外观 */
+function updateSortButton() {
+  const btn = document.getElementById('sortBtn');
+  if (!btn) return;
+  const idx = SORT_MODES.indexOf(currentSort);
+  btn.textContent = idx >= 0 ? ['↓', '↑', 'A↑', 'A↓'][idx] : '⇅';
+  btn.title = '排序：' + (SORT_LABELS[idx] || '最新在前');
+  // 非默认排序时高亮按钮
+  btn.classList.toggle('active-sort', currentSort !== 'added_desc');
+}
+
 /** 渲染书架 */
 function renderBookshelf() {
   const grid = document.getElementById('bookshelfGrid');
-  const shelf = getBookshelf();
+  const shelf = getSortedBookshelf();
+  updateSortButton();
 
   grid.innerHTML = '';
 

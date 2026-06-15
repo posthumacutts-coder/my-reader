@@ -51,11 +51,42 @@ html, body {
   z-index: 10;
 }
 
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
 .app-title {
   font-size: 22px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: 1px;
+}
+
+.sort-btn {
+  position: absolute;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.05);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  color: var(--text-secondary);
+}
+
+.sort-btn:active { background: rgba(0,0,0,0.12); }
+
+.sort-btn.active-sort {
+  background: var(--primary);
+  color: #fff;
 }
 
 .bookshelf-grid {
@@ -206,8 +237,10 @@ html, body {
   background: var(--reader-bg);
 }
 
-/* 顶部工具栏 */
+/* 顶部工具栏（浮动覆盖层） */
 .reader-topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
   display: flex;
   align-items: center;
   padding: calc(8px + var(--safe-top)) 12px 8px;
@@ -216,11 +249,10 @@ html, body {
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(0,0,0,0.06);
   z-index: 50;
-  transition: transform 0.3s, opacity 0.3s;
+  transition: opacity 0.3s;
 }
 
 .reader-topbar.hidden-bar {
-  transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
 }
@@ -265,12 +297,15 @@ html, body {
 
 .btn-icon:active { background: rgba(0,0,0,0.12); }
 
-/* 阅读内容区 */
+/* 阅读内容区（全屏，工具栏浮动其上） */
 .reader-viewport {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 20px 20px 40px;
+  /* 给顶部和底部留出空间防止内容被工具栏遮挡 */
+  padding-top: calc(56px + var(--safe-top));
+  padding-bottom: 120px;
 }
 
 .reader-content {
@@ -324,19 +359,20 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* 底部设置栏 */
+/* 底部设置栏（浮动覆盖层） */
 .reader-bottombar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
   padding: 8px 16px calc(8px + var(--safe-bottom));
   background: var(--bottombar-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid rgba(0,0,0,0.06);
   z-index: 50;
-  transition: transform 0.3s, opacity 0.3s;
+  transition: opacity 0.3s;
 }
 
 .reader-bottombar.hidden-bar {
-  transform: translateY(100%);
   opacity: 0;
   pointer-events: none;
 }
