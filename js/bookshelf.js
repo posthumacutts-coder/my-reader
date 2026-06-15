@@ -199,6 +199,42 @@ async function addBook(file) {
   }
 }
 
+/** 从原生文件选择器接收文件（Android APK 专用，更可靠） */
+window.receiveNativeFile = async function(fileName, base64Data) {
+  try {
+    showToast('正在导入《' + fileName.replace(/\.epub$/i, '') + '》...');
+
+    // base64 → ArrayBuffer
+    const binary = atob(base64Data);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const arrayBuffer = bytes.buffer;
+
+    // 解析 EPUB
+    const epubData = await parseEpub(arrayBuffer);
+
+    const id = 'book_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+    const title = epubData.title && epubData.title !== '未知书名'
+      ? epubData.title
+      : fileName.replace(/\.epub$/i, '');
+    const author = epubData.author !== '未知作者' ? epubData.author : '';
+
+    const coverThumb = epubData.cover
+      ? await resizeCover(epubData.cover, 200)
+      : '';
+
+    await saveBookFile(id, arrayBuffer, { title, author, cover: epubData.cover });
+    addToBookshelf({ id, title, author, cover: coverThumb, addedAt: Date.now() });
+    renderBookshelf();
+    showToast('《' + title + '》已添加到书架');
+  } catch (err) {
+    console.error('导入失败:', err);
+    alert('导入失败：' + (err.message || '未知错误'));
+  }
+};
+
 /** 删除书籍 */
 async function deleteBook(id) {
   const shelf = getBookshelf();

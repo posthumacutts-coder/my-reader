@@ -50,9 +50,15 @@ function bindBookshelfEvents() {
     cycleSort();
   });
 
-  // 添加书籍按钮
+  // 添加书籍按钮（优先使用原生文件选择器）
   document.getElementById('addBookBtn').addEventListener('click', () => {
-    document.getElementById('fileInput').click();
+    if (window.NativeReader && window.NativeReader.pickFile) {
+      // Android APK：使用原生文件选择器，兼容 MIUI 等系统
+      window.NativeReader.pickFile();
+    } else {
+      // 浏览器：使用普通 file input
+      document.getElementById('fileInput').click();
+    }
   });
 
   // 文件选择
