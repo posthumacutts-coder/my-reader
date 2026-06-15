@@ -1,0 +1,24 @@
+{
+  "packageId": "io.github.posthumacutts_coder.myreader",
+  "host": "posthumacutts-coder.github.io",
+  "name": "我的阅读",
+  "launcherName": "我的阅读",
+  "display": "standalone",
+  "themeColor": "#f5f1e8",
+  "backgroundColor": "#f5f1e8",
+  "startUrl": "/my-reader/index.html",
+  "iconUrl": "https://posthumacutts-coder.github.io/my-reader/assets/icon-512.png",
+  "maskableIconUrl": "https://posthumacutts-coder.github.io/my-reader/assets/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "enableSiteSettingsShortcut": true,
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": { "enabled": false },
+    "playBilling": { "enabled": false }
+  },
+  "signingKey": {
+    "path": "myreader.keystore",
+    "alias": "myreader",
+    "password": "myreader2026"
+  }
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MyReader" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">#f5f1e8</item>
+        <item name="android:statusBarColor">#f5f1e8</item>
+        <item name="android:navigationBarColor">#f5f1e8</item>
+    </style>
+</resources>
