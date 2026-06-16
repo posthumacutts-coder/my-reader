@@ -132,9 +132,22 @@ function createBookCard(book, index) {
   actionsDiv.appendChild(renameBtn);
   actionsDiv.appendChild(deleteBtn);
 
+  // 阅读进度条
+  const progress = getProgress(book.id);
+  const pct = progress.percent || 0;
+  const progressDiv = document.createElement('div');
+  progressDiv.className = 'book-progress';
+  progressDiv.innerHTML = `
+    <div class="book-progress-bar">
+      <div class="book-progress-fill" style="width:${pct}%"></div>
+    </div>
+    <span class="book-progress-text">${pct}%</span>
+  `;
+
   card.appendChild(coverDiv);
   card.appendChild(infoDiv);
   card.appendChild(actionsDiv);
+  card.appendChild(progressDiv);
 
   // 点击卡片 → 打开阅读器
   card.addEventListener('click', () => {

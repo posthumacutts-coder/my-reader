@@ -207,6 +207,36 @@ html, body {
 .book-action-btn.delete { color: #e88; }
 .book-action-btn.delete:hover { color: #d44; background: #fff5f5; }
 
+/* 书架进度条 */
+.book-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 8px;
+}
+
+.book-progress-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.book-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.book-progress-text {
+  font-size: 10px;
+  color: var(--text-secondary);
+  min-width: 26px;
+  text-align: right;
+}
+
 /* 浮动添加按钮 */
 .fab {
   position: fixed;
