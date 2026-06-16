@@ -39,6 +39,13 @@ async function initApp() {
   // 监听 PWA 安装
   listenInstallPrompt();
 
+  // 监听浏览器/系统返回键：在阅读器中返回书架而非退出
+  window.addEventListener('popstate', (e) => {
+    if (currentBookId) {
+      closeReader();
+    }
+  });
+
   console.log('📖 我的阅读 已就绪');
 }
 
@@ -89,10 +96,10 @@ function bindBookshelfEvents() {
 
 // ===== 阅读器事件 =====
 
-// 返回按钮（在 reader.js 的 HTML 中绑定，这里确保有备用）
+// 返回按钮：使用 history.back() 回到书架（触发 popstate → closeReader）
 document.addEventListener('click', (e) => {
   if (e.target.closest('#btnBack')) {
-    closeReader();
+    history.back();
   }
 });
 

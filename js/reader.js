@@ -8,6 +8,7 @@ let currentEpubData = null;
 let toolbarsVisible = true;
 let hideTimer = null;
 let lastScrollSave = 0;
+let readerStatePushed = false;
 
 /** 打开阅读器 */
 async function openReader(bookId) {
@@ -50,6 +51,12 @@ async function openReader(bookId) {
     showToolbars();
     scheduleHideToolbars();
 
+    // 推入历史记录，使系统返回键回到书架而非退出
+    if (!readerStatePushed) {
+      history.pushState({ view: 'reader' }, '', location.href);
+      readerStatePushed = true;
+    }
+
   } catch (err) {
     console.error('打开书籍失败:', err);
     contentDiv.innerHTML = '<div class="empty-state"><p>打开失败：' + (err.message || '未知错误') + '</p></div>';
@@ -73,6 +80,9 @@ function renderAllChapters(epubData) {
 
 /** 关闭阅读器，返回书架 */
 function closeReader() {
+  // 重置历史状态标记
+  readerStatePushed = false;
+
   // 保存阅读进度
   if (currentBookId) {
     saveCurrentProgress();
@@ -157,7 +167,7 @@ function handleKeyboard(e) {
       break;
     case 'Escape':
       e.preventDefault();
-      closeReader();
+      history.back();
       break;
   }
 }
