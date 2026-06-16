@@ -258,7 +258,10 @@ function replaceResourcePaths(html, resourceBlobs, opfDir, chapterHref) {
 function resolvePath(base, relative) {
   if (relative.startsWith('/')) return relative.substring(1);
   const baseParts = base.split('/').filter(Boolean);
-  baseParts.pop(); // 去掉文件名，保留目录
+  // 去掉文件名，保留目录。但如果 base 以 / 结尾（是目录而非文件），则不 pop
+  if (baseParts.length > 0 && !base.endsWith('/')) {
+    baseParts.pop();
+  }
   const relParts = relative.split('/');
   for (const part of relParts) {
     if (part === '..') baseParts.pop();
