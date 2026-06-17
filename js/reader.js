@@ -323,13 +323,32 @@ function restoreReadingPosition(bookId) {
   const progress = getProgress(bookId);
   const viewport = document.getElementById('readerViewport');
 
-  // 延迟恢复（等待内容渲染完成）
-  setTimeout(() => {
-    if (progress.scrollTop > 0) {
-      viewport.scrollTop = progress.scrollTop;
-    }
+  if (progress.scrollTop <= 0) {
     updateProgressBar();
-  }, 200);
+    return;
+  }
+
+  // 确保 DOM 布局完成后再恢复滚动位置
+  function doRestore() {
+    viewport.scrollTop = progress.scrollTop;
+    updateProgressBar();
+    // 防止恢复触发的 scroll 事件覆盖正确的进度
+    lastScrollSave = Date.now();
+
+    // 如果恢复后位置偏差较大，说明内容还没渲染完，延迟重试
+    if (Math.abs(viewport.scrollTop - progress.scrollTop) > 10) {
+      setTimeout(() => {
+        viewport.scrollTop = progress.scrollTop;
+        updateProgressBar();
+        lastScrollSave = Date.now();
+      }, 400);
+    }
+  }
+
+  // 双 rAF 确保浏览器完成至少一次布局
+  requestAnimationFrame(() => {
+    requestAnimationFrame(doRestore);
+  });
 }
 
 // ===== 辅助 =====
