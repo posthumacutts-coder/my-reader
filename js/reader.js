@@ -12,7 +12,6 @@ let readerStatePushed = false;
 
 /** 打开阅读器 */
 async function openReader(bookId) {
-  currentBookId = bookId;
 
   // 切换到阅读器视图
   document.getElementById('view-bookshelf').classList.add('hidden');
@@ -46,6 +45,9 @@ async function openReader(bookId) {
 
     // 恢复阅读进度
     restoreReadingPosition(bookId);
+
+    // ★ 内容加载完成后才设置 currentBookId，防止加载期间意外保存进度为 0
+    currentBookId = bookId;
 
     // 显示工具栏
     showToolbars();
@@ -316,6 +318,15 @@ function saveCurrentProgress() {
   const scrollTop = viewport.scrollTop;
   const maxScroll = viewport.scrollHeight - viewport.clientHeight;
   const percent = maxScroll > 0 ? Math.round((scrollTop / maxScroll) * 100) : 0;
+
+  // 防御：如果当前位置为 0 但之前有有效进度，不覆盖（可能在加载期间被误触发）
+  if (scrollTop === 0 && percent === 0) {
+    const prev = getProgress(currentBookId);
+    if (prev.percent > 0 && prev.scrollTop > 0) {
+      return; // 保留旧进度，不保存 0
+    }
+  }
+
   saveProgress(currentBookId, scrollTop, percent);
 }
 
