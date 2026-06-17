@@ -42,7 +42,16 @@ async function initApp() {
   // 监听浏览器/系统返回键：在阅读器中返回书架而非退出
   window.addEventListener('popstate', (e) => {
     if (currentBookId) {
+      // 返回前先保存进度
+      saveCurrentProgress();
       closeReader();
+    }
+  });
+
+  // 页面被关闭/挂起时保存进度（App 退出、页面刷新等场景）
+  window.addEventListener('pagehide', () => {
+    if (currentBookId) {
+      saveCurrentProgress();
     }
   });
 

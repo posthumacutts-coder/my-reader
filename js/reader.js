@@ -322,26 +322,28 @@ function saveCurrentProgress() {
 function restoreReadingPosition(bookId) {
   const progress = getProgress(bookId);
   const viewport = document.getElementById('readerViewport');
+  const targetScroll = progress.scrollTop;
 
-  if (progress.scrollTop <= 0) {
+  if (targetScroll <= 0) {
     updateProgressBar();
     return;
   }
 
-  // 确保 DOM 布局完成后再恢复滚动位置
+  let retries = 0;
+  const maxRetries = 15; // 最多尝试 15 次（约 2.5 秒）
+
   function doRestore() {
-    viewport.scrollTop = progress.scrollTop;
+    viewport.scrollTop = targetScroll;
     updateProgressBar();
     // 防止恢复触发的 scroll 事件覆盖正确的进度
     lastScrollSave = Date.now();
 
-    // 如果恢复后位置偏差较大，说明内容还没渲染完，延迟重试
-    if (Math.abs(viewport.scrollTop - progress.scrollTop) > 10) {
-      setTimeout(() => {
-        viewport.scrollTop = progress.scrollTop;
-        updateProgressBar();
-        lastScrollSave = Date.now();
-      }, 400);
+    // 如果内容高度还不够，继续轮询重试
+    if (viewport.scrollTop < targetScroll - 10 && retries < maxRetries) {
+      retries++;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(doRestore);
+      });
     }
   }
 
