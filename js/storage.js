@@ -139,6 +139,7 @@ const DEFAULT_SETTINGS = {
   bgColor: '#f5f1e8',
   fontSize: 16,
   fontFamily: "'PingFang SC','Microsoft YaHei',sans-serif",
+  letterSpacing: 0,
 };
 
 function getSettings() {

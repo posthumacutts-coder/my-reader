@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-title" content="我的阅读">
     <meta name="theme-color" content="#f5f1e8">
     <title>我的阅读</title>
-    <link rel="manifest" href="manifest.json?v=4">
+    <link rel="manifest" href="manifest.json?v=5">
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/icon-192.png">
-    <link rel="stylesheet" href="css/style.css?v=4">
+    <link rel="stylesheet" href="css/style.css?v=5">
 </head>
 <body>
     <!-- ===== 书架视图 ===== -->
@@ -87,6 +87,14 @@
                     </div>
                 </div>
                 <div class="setting-item">
+                    <label>字距</label>
+                    <div class="font-size-ctrl">
+                        <button class="btn-sm" id="letterSpacingDown">−</button>
+                        <span class="size-label" id="letterSpacingLabel">0px</span>
+                        <button class="btn-sm" id="letterSpacingUp">+</button>
+                    </div>
+                </div>
+                <div class="setting-item">
                     <label>字体</label>
                     <select class="font-select" id="fontFamilySelect">
                         <option value="'PingFang SC','Microsoft YaHei',sans-serif">默认</option>
@@ -125,10 +133,10 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="js/storage.js?v=4"></script>
-    <script src="js/epub.js?v=4"></script>
-    <script src="js/bookshelf.js?v=4"></script>
-    <script src="js/reader.js?v=4"></script>
-    <script src="js/app.js?v=4"></script>
+    <script src="js/storage.js?v=5"></script>
+    <script src="js/epub.js?v=5"></script>
+    <script src="js/bookshelf.js?v=5"></script>
+    <script src="js/reader.js?v=5"></script>
+    <script src="js/app.js?v=5"></script>
 </body>
 </html>

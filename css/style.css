@@ -14,6 +14,7 @@
   --reader-bg: #f5f1e8;
   --reader-font: 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --reader-size: 16px;
+  --reader-spacing: 0px;
   --reader-color: #333;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -92,8 +93,8 @@ html, body {
 .bookshelf-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
   padding: 8px 16px calc(80px + var(--safe-bottom));
   overflow-y: auto;
   align-content: start;
@@ -343,6 +344,7 @@ html, body {
   margin: 0 auto;
   font-family: var(--reader-font);
   font-size: var(--reader-size);
+  letter-spacing: var(--reader-spacing);
   color: var(--reader-color);
   line-height: 1.9;
   word-break: break-word;

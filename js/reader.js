@@ -242,6 +242,17 @@ function setupSettings() {
     scheduleHideToolbars();
   });
 
+  // 字间距调节
+  document.getElementById('letterSpacingDown').addEventListener('click', () => {
+    changeLetterSpacing(-1);
+    scheduleHideToolbars();
+  });
+
+  document.getElementById('letterSpacingUp').addEventListener('click', () => {
+    changeLetterSpacing(1);
+    scheduleHideToolbars();
+  });
+
   // 字体选择
   document.getElementById('fontFamilySelect').addEventListener('change', (e) => {
     const font = e.target.value;
@@ -255,6 +266,7 @@ function applySettings(settings) {
   if (settings.bgColor) applyBgColor(settings.bgColor);
   if (settings.fontSize) applyFontSize(settings.fontSize);
   if (settings.fontFamily) applyFontFamily(settings.fontFamily);
+  if (settings.letterSpacing !== undefined) applyLetterSpacing(settings.letterSpacing);
 }
 
 function applyBgColor(color) {
@@ -290,6 +302,18 @@ function changeFontSize(delta) {
   const newSize = Math.max(12, Math.min(28, settings.fontSize + delta));
   applyFontSize(newSize);
   saveSettings({ fontSize: newSize });
+}
+
+function applyLetterSpacing(spacing) {
+  document.documentElement.style.setProperty('--reader-spacing', spacing + 'px');
+  document.getElementById('letterSpacingLabel').textContent = spacing + 'px';
+}
+
+function changeLetterSpacing(delta) {
+  const settings = getSettings();
+  const newSpacing = Math.max(0, Math.min(10, settings.letterSpacing + delta));
+  applyLetterSpacing(newSpacing);
+  saveSettings({ letterSpacing: newSpacing });
 }
 
 /** 判断颜色是否为深色 */
