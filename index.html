@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-title" content="我的阅读">
     <meta name="theme-color" content="#f5f1e8">
     <title>我的阅读</title>
-    <link rel="manifest" href="manifest.json?v=3">
+    <link rel="manifest" href="manifest.json?v=4">
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/icon-192.png">
-    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
     <!-- ===== 书架视图 ===== -->
@@ -64,6 +64,11 @@
             <!-- 设置项 -->
             <div class="settings-row">
                 <div class="setting-item">
+                    <button class="toc-btn" id="btnToc" title="目录">
+                        <span class="toc-btn-icon">☰</span><span>目录</span>
+                    </button>
+                </div>
+                <div class="setting-item">
                     <label>背景</label>
                     <div class="color-presets" id="colorPresets">
                         <button data-color="#f5f1e8" class="color-dot active" style="background:#f5f1e8" title="护眼米黄"></button>
@@ -93,6 +98,18 @@
             </div>
         </div>
 
+        <!-- 目录面板 -->
+        <div class="toc-backdrop hidden" id="tocBackdrop"></div>
+        <div class="toc-panel hidden" id="tocPanel">
+            <div class="toc-header">
+                <span class="toc-header-title">目录</span>
+                <button class="btn-icon" id="tocClose" title="关闭" aria-label="关闭目录">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="toc-list" id="tocList"></div>
+        </div>
+
     </div>
 
     <!-- 重命名弹窗（全局，书架和阅读器都可使用） -->
@@ -108,10 +125,10 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="js/storage.js?v=3"></script>
-    <script src="js/epub.js?v=3"></script>
-    <script src="js/bookshelf.js?v=3"></script>
-    <script src="js/reader.js?v=3"></script>
-    <script src="js/app.js?v=3"></script>
+    <script src="js/storage.js?v=4"></script>
+    <script src="js/epub.js?v=4"></script>
+    <script src="js/bookshelf.js?v=4"></script>
+    <script src="js/reader.js?v=4"></script>
+    <script src="js/app.js?v=4"></script>
 </body>
 </html>

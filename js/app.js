@@ -26,6 +26,7 @@ async function initApp() {
   // 绑定阅读器事件
   setupReaderInteractions();
   setupSettings();
+  setupToc();
 
   // 绑定重命名弹窗事件
   bindRenameDialogEvents();

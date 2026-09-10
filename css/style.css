@@ -520,6 +520,106 @@ html, body {
   cursor: pointer;
 }
 
+/* ===== 目录按钮 ===== */
+.toc-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.toc-btn:active { background: #f0f0f0; }
+
+.toc-btn-icon { font-size: 14px; line-height: 1; }
+
+/* ===== 目录面板 ===== */
+.toc-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 55;
+  animation: fadeIn 0.2s;
+}
+
+.toc-panel {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+  z-index: 60;
+  animation: tocSlideUp 0.25s ease;
+  overflow: hidden;
+}
+
+.toc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+
+.toc-header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.toc-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 0;
+}
+
+.toc-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.toc-item:active { background: rgba(0,0,0,0.06); }
+
+.toc-item.active {
+  color: var(--primary-dark);
+  font-weight: 600;
+  background: rgba(201,169,110,0.12);
+}
+
+.toc-item.toc-heading {
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: default;
+  padding-top: 14px;
+}
+
+.toc-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+@keyframes tocSlideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
 /* ===== 点击区域（通过 JS 在 viewport 上处理） ===== */
 
 /* ===== 重命名弹窗 ===== */
@@ -632,10 +732,37 @@ html, body {
 
 #view-reader.dark-mode .btn-icon,
 #view-reader.dark-mode .btn-sm,
-#view-reader.dark-mode .font-select {
+#view-reader.dark-mode .font-select,
+#view-reader.dark-mode .toc-btn {
   background: rgba(255,255,255,0.12);
   color: #ddd;
   border-color: rgba(255,255,255,0.2);
+}
+
+#view-reader.dark-mode .toc-panel {
+  background: rgba(40,40,40,0.98);
+}
+
+#view-reader.dark-mode .toc-header {
+  border-color: rgba(255,255,255,0.08);
+}
+
+#view-reader.dark-mode .toc-header-title,
+#view-reader.dark-mode .toc-item {
+  color: #ddd;
+}
+
+#view-reader.dark-mode .toc-item.active {
+  color: #e6c98a;
+  background: rgba(201,169,110,0.16);
+}
+
+#view-reader.dark-mode .toc-item.toc-heading {
+  color: #aaa;
+}
+
+#view-reader.dark-mode .toc-empty {
+  color: #999;
 }
 
 #view-reader.dark-mode .reader-topbar,

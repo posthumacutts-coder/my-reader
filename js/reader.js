@@ -5,6 +5,7 @@
 
 let currentBookId = null;
 let currentEpubData = null;
+let currentToc = null;
 let toolbarsVisible = true;
 let hideTimer = null;
 let lastScrollSave = 0;
@@ -42,6 +43,9 @@ async function openReader(bookId) {
 
     // 渲染章节
     renderAllChapters(currentEpubData);
+
+    // 渲染目录
+    renderToc(currentEpubData.toc);
 
     // 恢复阅读进度
     restoreReadingPosition(bookId);
@@ -97,6 +101,8 @@ function closeReader() {
 
   currentBookId = null;
   currentEpubData = null;
+  currentToc = null;
+  closeToc();
   clearTimeout(hideTimer);
 
   document.getElementById('view-reader').classList.add('hidden');
@@ -136,6 +142,8 @@ function setupReaderInteractions() {
   // 滚动时更新进度
   viewport.addEventListener('scroll', () => {
     updateProgressBar();
+    // 目录面板打开时同步高亮当前章节
+    if (isTocOpen()) updateTocCurrent();
     // 防抖保存进度
     const now = Date.now();
     if (now - lastScrollSave > 2000) {
@@ -290,6 +298,144 @@ function isDarkColor(hex) {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   return (r * 299 + g * 587 + b * 114) / 1000 < 128;
+}
+
+// ===== 目录面板 =====
+
+/** 绑定目录面板事件 */
+function setupToc() {
+  document.getElementById('btnToc').addEventListener('click', () => {
+    if (isTocOpen()) {
+      closeToc();
+      scheduleHideToolbars();
+    } else {
+      openToc();
+    }
+  });
+
+  document.getElementById('tocClose').addEventListener('click', () => {
+    closeToc();
+    scheduleHideToolbars();
+  });
+
+  document.getElementById('tocBackdrop').addEventListener('click', () => {
+    closeToc();
+    scheduleHideToolbars();
+  });
+
+  // 点击目录条目跳转
+  document.getElementById('tocList').addEventListener('click', (e) => {
+    const item = e.target.closest('.toc-item');
+    if (!item) return;
+    const index = parseInt(item.dataset.index, 10);
+    const entry = currentToc && currentToc[index];
+    if (!entry || entry.chapterIndex < 0) return;
+
+    jumpToChapter(entry.chapterIndex, entry.anchor);
+    closeToc();
+    scheduleHideToolbars();
+  });
+}
+
+/** 渲染目录列表 */
+function renderToc(toc) {
+  currentToc = toc || null;
+  const list = document.getElementById('tocList');
+
+  if (!currentToc || !currentToc.length) {
+    list.innerHTML = '<div class="toc-empty">本书无目录</div>';
+    return;
+  }
+
+  let html = '';
+  currentToc.forEach((entry, i) => {
+    const indent = Math.max(0, entry.level);
+    const style = `padding-left:${12 + indent * 16}px`;
+    if (entry.chapterIndex >= 0) {
+      html += `<div class="toc-item" data-index="${i}" style="${style}">${escapeHtml(entry.label)}</div>`;
+    } else {
+      html += `<div class="toc-item toc-heading" style="${style}">${escapeHtml(entry.label)}</div>`;
+    }
+  });
+  list.innerHTML = html;
+}
+
+function isTocOpen() {
+  const panel = document.getElementById('tocPanel');
+  return panel && !panel.classList.contains('hidden');
+}
+
+function openToc() {
+  clearTimeout(hideTimer); // 浏览目录时暂停工具栏自动隐藏
+  document.getElementById('tocPanel').classList.remove('hidden');
+  document.getElementById('tocBackdrop').classList.remove('hidden');
+  updateTocCurrent();
+}
+
+function closeToc() {
+  document.getElementById('tocPanel').classList.add('hidden');
+  document.getElementById('tocBackdrop').classList.add('hidden');
+}
+
+/** 跳转到指定章节（可选锚点） */
+function jumpToChapter(chapterIndex, anchor) {
+  const viewport = document.getElementById('readerViewport');
+  const section = document.getElementById('ch-' + chapterIndex);
+  if (!viewport || !section) return;
+
+  let target = section;
+  if (anchor) {
+    const el = findByIdWithin(section, anchor);
+    if (el) target = el;
+  }
+
+  const vpRect = viewport.getBoundingClientRect();
+  const rect = target.getBoundingClientRect();
+  const offset = rect.top - vpRect.top + viewport.scrollTop;
+  // 顶部留出工具栏空间
+  const topOffset = 64;
+  viewport.scrollTo({ top: Math.max(0, offset - topOffset), behavior: 'smooth' });
+  updateProgressBar();
+}
+
+/** 在指定根元素内按 id 查找（避免跨章节 id 冲突） */
+function findByIdWithin(root, id) {
+  if (!id) return null;
+  if (root.id === id) return root;
+  const escaped = String(id).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return root.querySelector(`[id="${escaped}"]`);
+}
+
+/** 计算当前所在章节索引（返回 spine 索引，与目录 chapterIndex 对齐） */
+function getCurrentChapterIndex() {
+  const viewport = document.getElementById('readerViewport');
+  const chapters = document.querySelectorAll('.chapter');
+  if (!chapters.length) return 0;
+
+  const vpTop = viewport.getBoundingClientRect().top;
+  let current = 0;
+  for (let i = 0; i < chapters.length; i++) {
+    const rect = chapters[i].getBoundingClientRect();
+    if (rect.top <= vpTop + 100) {
+      const m = chapters[i].id.match(/^ch-(\d+)$/);
+      current = m ? parseInt(m[1], 10) : i;
+    }
+  }
+  return current;
+}
+
+/** 高亮目录中当前章节 */
+function updateTocCurrent() {
+  const list = document.getElementById('tocList');
+  if (!currentToc || !currentToc.length) return;
+
+  const current = getCurrentChapterIndex();
+  const items = list.querySelectorAll('.toc-item[data-index]');
+  items.forEach(el => {
+    const idx = parseInt(el.dataset.index, 10);
+    const entry = currentToc[idx];
+    el.classList.toggle('active', entry && entry.chapterIndex === current);
+  });
 }
 
 // ===== 阅读进度 =====
